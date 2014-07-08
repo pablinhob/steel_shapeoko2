@@ -8,7 +8,7 @@ In my country isn't easy to amateur materials like openslide or other aluminium 
 I've tied made an opensource big CNC, ussing the existing projects as Shapeoko and RepRap.
 
 
-=Hardware=
+# Hardware #
 * Dimensions: 1000mm x 3000mm (Obviously, ustomizable)
 * Frame and desk structure: steel tube 40x40mm
 * Rail: OpenRail ( https://www.kickstarter.com/projects/openrail/openrail-open-source-linear-bearing-system/posts/261027 )
