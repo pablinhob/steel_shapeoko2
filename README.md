@@ -9,7 +9,7 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 
 
 # Mecanical hardware #
-* Dimensions: 1000mm x 3000mm (Obviously, ustomizable)
+* Dimensions: 1000mm x 3000mm (Obviously, customizable)
 * Frame and desk structure: steel tube 40x40mm
 * Rail: OpenRail ( https://www.kickstarter.com/projects/openrail/openrail-open-source-linear-bearing-system/posts/261027 )
 * Shapeoko2 Plates: Modified and cutted by laser in 6mm steel
