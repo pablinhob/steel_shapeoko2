@@ -23,3 +23,11 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 
 # Firmware #
 * Marlin (Reprap): modified to avoid all temperature references, turning it in a CNC firmware instead 3D printer one.
+
+
+
+# CONNECTION DETAILS #
+
+Wantai DQ542MA and Marlin connections. It works to beetwen arduino and any other drivers.
+
+![](https://raw.githubusercontent.com/pablinhob/steel_shapeoko2/master/resources/wantai_sanguinololu.png)
