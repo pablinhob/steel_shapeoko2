@@ -26,7 +26,7 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 
 
 
-# DETAILS #
+# CONNECTION DETAILS #
 
 Wantai DQ542MA and Marlin connections. It works to beetwen arduino and any other drivers.
 
