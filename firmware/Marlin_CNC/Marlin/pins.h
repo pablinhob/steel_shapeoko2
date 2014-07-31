@@ -651,7 +651,7 @@
 #endif
 
 #define X_STEP_PIN         15
-#define X_DIR_PIN          0
+#define X_DIR_PIN          23
 #define X_STOP_PIN         18
 
 #define Y_STEP_PIN         22
@@ -663,7 +663,7 @@
 #define Z_STOP_PIN         20
 
 #define E0_STEP_PIN         1
-#define E0_DIR_PIN          23
+#define E0_DIR_PIN          0
 
 #define LED_PIN            -1
 
