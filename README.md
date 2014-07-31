@@ -28,6 +28,6 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 
 # DETAILS #
 
-Wantai DQ542MA and Marlin connections
+Wantai DQ542MA and Marlin connections. It works to beetwen arduino and any other drivers.
 
 ![](https://raw.githubusercontent.com/pablinhob/steel_shapeoko2/master/resources/wantai_sanguinololu.png)
