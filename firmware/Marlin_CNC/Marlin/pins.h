@@ -651,11 +651,11 @@
 #endif
 
 #define X_STEP_PIN         15
-#define X_DIR_PIN          23
+#define X_DIR_PIN          21
 #define X_STOP_PIN         18
 
 #define Y_STEP_PIN         22
-#define Y_DIR_PIN          21
+#define Y_DIR_PIN          23
 #define Y_STOP_PIN         19
 
 #define Z_STEP_PIN         3
