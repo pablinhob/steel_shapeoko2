@@ -3,7 +3,7 @@ steel shapeoko2
 
 Big Shapeoko made by steel tubes and OpenRail.
 
-In my country isn't easy to amateur materials like openslide or other aluminium railed frames. If you buy something like shapeoko or makerslide to the USA, you have to pay a lot of custom clearance costs.
+In my country isn't easy to find amateur materials like openslide or other aluminium railed frames. If you buy something like shapeoko or makerslide to the USA, you have to pay a lot of custom clearance costs.
 
 I've tied made an opensource big CNC (Soft materials), ussing the existing open projects as Shapeoko and RepRap.
 
