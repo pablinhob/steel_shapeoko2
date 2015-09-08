@@ -31,3 +31,7 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 Wantai DQ542MA and Marlin connections. It works to beetwen arduino and any other drivers.
 
 ![](https://raw.githubusercontent.com/pablinhob/steel_shapeoko2/master/resources/wantai_sanguinololu.png)
+
+
+# ABOUT GCODE #
+Marlin firmware can`t read standard GCODE .nc files made by, for example meshcam. Use this python script to convert standard G-CODE to reprap favoured GCODE. https://gist.github.com/pablinhob/5b4a28e6b459bf64f90c#file-to_marlin_gcode-py
