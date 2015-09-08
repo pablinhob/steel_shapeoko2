@@ -34,6 +34,4 @@ Wantai DQ542MA and Marlin connections. It works to beetwen arduino and any other
 
 
 # ABOUT GCODE #
-Marlin firmware can`t read standard GCODE .nc files made by, for example meshcam. Use this python script to convert standard G-CODE to reprap favoured GCODE.
-
-![](https://gist.github.com/pablinhob/5b4a28e6b459bf64f90c#file-to_marlin_gcode-py)
+Marlin firmware can`t read standard GCODE .nc files made by, for example meshcam. Use this python script to convert standard G-CODE to reprap favoured GCODE. https://gist.github.com/pablinhob/5b4a28e6b459bf64f90c#file-to_marlin_gcode-py
