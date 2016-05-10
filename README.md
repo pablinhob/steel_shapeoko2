@@ -15,6 +15,7 @@ I've tied made an opensource big CNC (Soft materials), ussing the existing open 
 * Shapeoko2 Plates: Modified and cutted by laser in 6mm steel
 
 # Electronic hardware #
+* Sanguino ATMEGA W/ 1284p 16mhZ , Arduino as ISP
 * Drivers: Wantai  DQ542MA drivers
 * Steper Motor: Nema 23 
 * Sanguinololu (Reprap project)
