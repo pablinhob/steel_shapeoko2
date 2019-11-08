@@ -36,7 +36,8 @@ module diferencia() {
 }
 
 
-difference() {
- peza();
- diferencia();
-}
+rotate([0,90,0])
+ difference() {
+  peza();
+  diferencia();
+ }
