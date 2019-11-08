@@ -1,0 +1,3 @@
+pypy pycam/pycam --start-server-only --server-auth-key=fietspomp --number-of-processes=4 &
+python pyca/pycam --enable-server --remote-server=localhost --server-auth-key=fietspomp --number-of-processes=0 
+

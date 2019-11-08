@@ -1,0 +1,178 @@
+#!/usr/bin/python
+
+##Copyright (c) 2012, River Allen
+##All rights reserved.
+##
+##Redistribution and use in source and binary forms, with or without modification,
+##are permitted provided that the following conditions are met:
+##* Redistributions of source code must retain the above copyright notice, this list
+##  of conditions and the following disclaimer.
+##* Redistributions in binary form must reproduce the above copyright notice,
+##  this list of conditions and the following disclaimer in the documentation and/or
+##  other materials provided with the distribution.
+##
+##THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+##EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+##OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+##SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+##INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+##TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+##BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+##CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+##ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+##DAMAGE.
+
+import sys
+import serial
+import multiprocessing as mp
+import Queue
+import time
+
+# http://reprap.org/wiki/G-code#Unbuffered_G_commands
+unbuffered_commands = ['G4',
+                       'G20',
+                       'G21',
+                       'G90',
+                       'G91',
+                      ]
+
+class MendelController:
+    _alive = None
+    _mendel_ready = None
+    
+    def __init__(self, port, baud):
+        # Open serial port
+        self.ser = serial.Serial(port, baud, timeout=.1)
+
+        # Multiprocessing incidentals
+        self.manager = mp.Manager()
+        self._mendel_ready = self.manager.Value('B', 0)
+        # Pretend the event is a flag
+        self._alive_flag = self.manager.Event()
+        self._alive_flag.set()
+        self._command_cond = self.manager.Condition()
+        # Start listening on serial line
+        self.reader_proc = mp.Process(target=self.reader)
+        self.reader_proc.start()
+        
+        self.connect()
+        
+    def _get_mendel_ready(self):
+        return bool(self._mendel_ready.value)
+
+    def _set_mendel_ready(self, b):
+        self._mendel_ready.value = int(bool(b))
+
+    mendel_ready = property(_get_mendel_ready, _set_mendel_ready)
+
+    def connect(self):
+        # Wait for the Mendel to be ready to accept commands
+        # self._mendel_ready_.value will be set to 1 when 'start' received
+        # TODO: Add timeout as this is potential hang point
+        while 1:
+            if self.mendel_ready:
+                break
+            time.sleep(.1)
+
+    def run_file(self, filename):
+        # Wait for the Mendel to be ready to accept commands
+        # self._mendel_ready_.value will be set to 1 when 'start' received
+        if not self.mendel_ready:
+            self.connect()
+        print 'STARTING:', filename
+        # Give the Mendel some time to actually get ready.
+        time.sleep(.5)
+        counter = 1
+        with open(filename, 'rb') as f:
+            for line in f.readlines():
+                # A comment line, don't bother sending
+                if line[0] == ';':
+                    continue
+                # Remove comment from command
+                line = line.split(";")[0]
+                line = line.strip() # Remove unnecessary "\n" and empty space
+                if len(line) == 0:
+                    # Don't bother sending an empty line
+                    continue
+                print "%06d -- %s" % (counter, repr(line))
+                self.send_command_and_wait(line)
+                counter += 1
+
+    def send_command_and_wait(self, cmd):
+        # Check if unbuffered command
+        #  - unbuffered commands do not return an "ok"
+        # If unbuffered send without waiting for "ok"
+        for unbuf_cmd in unbuffered_commands:
+            if unbuf_cmd in cmd:
+                return self.send_command(cmd)
+        # Acquire condition lock
+        self._command_cond.acquire()
+        # Send the command off
+        self.send_command(cmd)
+        # Wait for 'ok' back
+        self._command_cond.wait()
+
+    def send_command(self, cmd):
+        # TODO: Add checksum + line and verify
+        self.ser.write("%s\r\n" % cmd)
+
+    def reader(self):
+        # Based on:
+        # http://pyserial.sourceforge.net/examples.html#miniterm
+        # Read data from UART serial and print out results.
+        # In addition, if the message is a status message, update
+        # class status variables.
+        data_buffer = ''
+
+        while self._alive_flag.is_set():
+            try:
+                # Read data byte by byte
+                byte = self.ser.read(1)
+            except Queue.Empty:
+                # Reading timed out (timeout time defined when serial initialized)
+                continue
+            # You know a command from the microcontroller has returned when it
+            # ends w/ a newline.
+            if byte == "\n":
+                print repr(data_buffer)
+                if "start" in data_buffer:
+                    self._mendel_ready.value = 1
+                elif "ok" in data_buffer:
+                    with self._command_cond:
+                        self._command_cond.notify_all()
+                # TODO: Deal w/ problems
+                elif "rs" in data_buffer:
+                    pass
+                elif "!!" in data_buffer:
+                    raise RuntimeError("The mendel had a critical failure and stopped.")
+                # Clear the buffer for the next command
+                data_buffer = ''
+            else:
+                data_buffer += byte
+
+    def quit(self):
+        self._alive_flag.clear()
+        self.reader_proc.join()
+
+if __name__ == '__main__':
+    # Simple command line script. Can be used, but mostly added for testing.
+    port = '/dev/ttyACM0'
+    baud = 115200
+    if len(sys.argv) > 1:
+        fnames = sys.argv[1:]
+    else:
+        print 'mendel_controller <filename1> [<filename2> ... <filenameN>]'
+        sys.exit()
+    
+    import gcode_converter
+    mc = MendelController(port, baud)
+    mgcc = gcode_converter.MarlinGCodeConverter()
+    try:
+        for fname in fnames:
+            converted_fname = mgcc.convert(fname, final_pos=(0., 0., 18.))
+            mc.run_file(converted_fname)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        mc.quit()
+
